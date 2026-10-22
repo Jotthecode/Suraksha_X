@@ -1,9 +1,14 @@
 // Matching spoken transcripts against the user's code phrases and the built-in distress words.
 
 // Multi-word / unambiguous distress phrases trigger on their own.
-export const STRONG_DISTRESS_WORDS = ['bachao', 'help me', 'save me', 'madad karo', 'bachao mujhe', 'please help'];
+// Includes the spellings speech-to-text produces for Hindi words in English mode, and Devanagari.
+export const STRONG_DISTRESS_WORDS = [
+  'bachao', 'bachaao', 'bacha o', 'bachav', 'bachchao', 'bachao mujhe',
+  'help me', 'save me', 'please help', 'madad karo',
+  'बचाओ', 'बचाव', 'मदद करो', 'मुझे बचाओ',
+];
 // Everyday words: only count when repeated within REPEAT_WINDOW_MS ("help… help!").
-export const WEAK_DISTRESS_WORDS = ['help', 'emergency', 'madad'];
+export const WEAK_DISTRESS_WORDS = ['help', 'emergency', 'madad', 'मदद'];
 export const REPEAT_WINDOW_MS = 6000;
 
 export const MIN_PHRASE_WORDS = 2;
@@ -13,8 +18,8 @@ export const normalizeSpeech = (text) =>
   String(text || '')
     .toLowerCase()
     .normalize('NFKD')
-    .replace(/[̀-ͯ]/g, '')
-    .replace(/[^\p{L}\p{N}\s]/gu, ' ')
+    .replace(/[\u0300-\u036f]/g, '') // Latin accents only; Devanagari vowel signs are kept
+    .replace(/[^\p{L}\p{M}\p{N}\s]/gu, ' ')
     .replace(/\s+/g, ' ')
     .trim();
 

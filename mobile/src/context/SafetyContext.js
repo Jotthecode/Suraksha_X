@@ -17,7 +17,7 @@ import {
   saveAuthToken,
   warmUpBackend,
 } from '../api/config';
-import { sendEmergencySms, requestEmergencyPermissions } from '../../modules/surakshax-native';
+import { sendEmergencySms, requestEmergencyPermissions, placeEmergencyCall } from '../../modules/surakshax-native';
 import { getLocationQuietly } from '../utils/location';
 
 export const SafetyContext = createContext();
@@ -72,7 +72,7 @@ export const SafetyProvider = ({ children }) => {
     detectDeviceLocation();
     if (Platform.OS === 'android') requestEmergencyPermissions();
     return () => {
-      if (emergencyStreamRef.current) clearInterval(emergencyStreamRef.current);
+      emergencyStreamRef.current?.remove?.();
     };
   }, []);
 
@@ -342,22 +342,34 @@ export const SafetyProvider = ({ children }) => {
     setIsSOSActive(false);
   };
 
-  const startEmergencyStream = (sessionId) => {
-    if (emergencyStreamRef.current) clearInterval(emergencyStreamRef.current);
-    let ticks = 0;
-    const push = async () => {
-      const loc = await getFreshLocation();
-      if (!loc.isRealGps) return; // never stream placeholder / test coordinates
-      streamGpsUpdate({
-        sessionId,
-        userName: user.name,
-        latitude: loc.latitude,
-        longitude: loc.longitude,
-      }).catch(() => {});
-      // Stream for 2 hours (matches the server's session validity)
-      if (++ticks > 1440 && emergencyStreamRef.current) clearInterval(emergencyStreamRef.current);
-    };
-    emergencyStreamRef.current = setInterval(push, 5000);
+  // Location updates are pushed by the OS (they keep arriving in the background while the protection
+  // service runs), unlike JavaScript timers, which React Native pauses when the app is not on screen.
+  const startEmergencyStream = async (sessionId) => {
+    stopEmergencyStream();
+    const until = Date.now() + 2 * 60 * 60 * 1000; // 2 hours, the server's session validity
+    try {
+      const sub = await Location.watchPositionAsync(
+        { accuracy: Location.Accuracy.High, timeInterval: 5000, distanceInterval: 0 },
+        (loc) => {
+          if (Date.now() > until) {
+            stopEmergencyStream();
+            return;
+          }
+          setCurrentLocation((prev) => ({ ...prev, latitude: loc.coords.latitude, longitude: loc.coords.longitude, isRealGps: true }));
+          streamGpsUpdate({
+            sessionId,
+            userName: user.name,
+            latitude: loc.coords.latitude,
+            longitude: loc.coords.longitude,
+            speed: loc.coords.speed || 0,
+            accuracy: loc.coords.accuracy || 0,
+          }).catch(() => {});
+        }
+      );
+      emergencyStreamRef.current = sub;
+    } catch (e) {
+      console.warn('Live location stream unavailable:', e.message);
+    }
   };
 
   /**
@@ -367,7 +379,7 @@ export const SafetyProvider = ({ children }) => {
    *  3. Backend dispatch: Twilio SMS/call if configured, nearest police, police dashboard
    *  4. Live location streaming to the tracking link for 2 hours
    */
-  const executeDispatch = async (reason) => {
+  const executeDispatch = async (reason, { autoCall = false } = {}) => {
     const trigger = reason || sosReason;
     const loc = await getFreshLocation();
     const sessionId = randomSessionId();
@@ -393,6 +405,12 @@ export const SafetyProvider = ({ children }) => {
     }
 
     startEmergencyStream(sessionId);
+
+    // Ring the first contact straight away (no tap needed when Phone permission is granted)
+    let callStatus = null;
+    if (autoCall && phones[0] && Platform.OS === 'android') {
+      callStatus = await placeEmergencyCall(phones[0]).catch(() => 'failed');
+    }
 
     let backend = null;
     let nearestName = hasFix ? 'Unavailable (offline)' : 'GPS unavailable – call 112';
@@ -447,17 +465,18 @@ export const SafetyProvider = ({ children }) => {
       response: backend,
       nearestPolice: nearestName,
       smsResults,
+      callStatus,
       trackingUrl,
       noGuardians: phones.length === 0,
     };
   };
 
-  const stopEmergencyStream = () => {
+  function stopEmergencyStream() {
     if (emergencyStreamRef.current) {
-      clearInterval(emergencyStreamRef.current);
+      emergencyStreamRef.current.remove?.();
       emergencyStreamRef.current = null;
     }
-  };
+  }
 
   return (
     <SafetyContext.Provider

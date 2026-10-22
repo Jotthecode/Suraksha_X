@@ -4,6 +4,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { useSafety } from '../context/SafetyContext';
+import { useTriggers } from '../context/TriggerContext';
 import { AppHeader } from '../components/AppHeader';
 import { ListRow } from '../components/ui';
 import { colors, spacing, radius, fontSize, touchTarget } from '../theme/colors';
@@ -17,9 +18,11 @@ const dispatchSummary = (info) => {
     const sent = (info.smsResults || []).filter((r) => r.status === 'sent').length;
     const total = (info.smsResults || []).length;
     if (sent > 0) lines.push(`SMS with your live location sent to ${sent} of ${total} contacts.`);
-    else if ((info.smsResults || []).some((r) => r.status === 'composer_opened')) lines.push('SMS app opened – press Send to alert your contacts.');
+    else if ((info.smsResults || []).some((r) => r.status === 'composer_opened')) lines.push('SMS app opened – press Send. To send automatically next time, allow SMS in Safety triggers → Permissions.');
     else lines.push('SMS could not be sent from this phone. Call 112 now.');
   }
+  if (info.callStatus === 'calling') lines.push('Calling your first contact.');
+  else if (info.callStatus === 'dialer_opened') lines.push('Dialer opened – press Call to reach your first contact.');
   lines.push(info.offline ? 'Server unreachable – police dashboard not notified.' : 'Nearest police station notified.');
   lines.push('Your live location is shared for the next 2 hours.');
   return lines.join('\n');
@@ -34,8 +37,9 @@ export const AlertsScreen = ({ navigation, route }) => {
   } = useSafety();
 
   const triggerReason = route.params?.triggerReason || 'Emergency SOS Button';
+  const { settings: triggerSettings } = useTriggers() || {};
 
-  const [secondsLeft, setSecondsLeft] = useState(10);
+  const [secondsLeft, setSecondsLeft] = useState(route.params?.seconds || 10);
   const [isDispatched, setIsDispatched] = useState(false);
   const [isSending, setIsSending] = useState(false);
   const [dispatchInfo, setDispatchInfo] = useState(null);
@@ -92,7 +96,7 @@ export const AlertsScreen = ({ navigation, route }) => {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
     } catch (e) {}
 
-    const res = await executeDispatch(triggerReason);
+    const res = await executeDispatch(triggerReason, { autoCall: triggerSettings?.autoCallFirstContact !== false });
     setIsSending(false);
     setIsDispatched(true);
     setDispatchInfo(res);

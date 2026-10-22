@@ -2,4 +2,34 @@
     <uses-permission android:name="android.permission.SEND_SMS"/>
     <uses-permission android:name="android.permission.CALL_PHONE"/>
     <uses-feature android:name="android.hardware.telephony" android:required="false"/>
+
+    <!-- Background protection: foreground service with a visible notification -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE"/>
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+
+    <!-- Lets the app see every installed speech recognition service (Google, Samsung, ...).
+         Without this, Android 11+ hides non-default services and recognition never starts. -->
+    <queries>
+        <intent>
+            <action android:name="android.speech.RecognitionService"/>
+        </intent>
+    </queries>
+
+    <application>
+        <service
+            android:name="expo.modules.surakshaxnative.ProtectionService"
+            android:exported="false"
+            android:foregroundServiceType="microphone|location|specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="Personal safety: detects SOS gestures (phone shake, sudden running) while the app is in the background"/>
+        </service>
+        <receiver
+            android:name="expo.modules.surakshaxnative.SosActionReceiver"
+            android:exported="false"/>
+    </application>
 </manifest>

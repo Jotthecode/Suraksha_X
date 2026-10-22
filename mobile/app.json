@@ -2,7 +2,7 @@
   "expo": {
     "name": "SurakshaX",
     "slug": "surakshax",
-    "version": "2.1.0",
+    "version": "3.1.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -32,7 +32,7 @@
         "VIBRATE",
         "INTERNET"
       ],
-      "versionCode": 21
+      "versionCode": 31
     },
     "web": {
       "favicon": "./assets/favicon.png"

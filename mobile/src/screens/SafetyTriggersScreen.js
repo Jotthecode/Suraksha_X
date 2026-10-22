@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Switch, Pressable, Alert } from 'react-native';
+import { View, Text, StyleSheet, Switch, Pressable, Alert, Platform } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Screen, Card, SectionTitle, Button, TextField, Notice } from '../components/ui';
+import { PermissionsCard } from '../components/PermissionsCard';
 import { useTriggers } from '../context/TriggerContext';
 import { matchTranscript, validateCodePhrase, MAX_PHRASES } from '../utils/phraseMatching';
 import { colors, spacing, fontSize, touchTarget } from '../theme/colors';
@@ -25,7 +26,8 @@ const SwitchRow = ({ icon, label, hint, value, onChange, divider, disabled }) =>
 );
 
 export const SafetyTriggersScreen = ({ navigation }) => {
-  const { settings, updateSettings, voiceStatus, voiceMode, speechSupported, motionState, motionStats } = useTriggers();
+  const { settings, updateSettings, voiceStatus, voiceMode, voiceDebug, speechSupported, motionState, motionStats, protectionOn } =
+    useTriggers();
   const [newPhrase, setNewPhrase] = useState('');
   const [phraseError, setPhraseError] = useState('');
   const [testText, setTestText] = useState('');
@@ -74,6 +76,13 @@ export const SafetyTriggersScreen = ({ navigation }) => {
 
   return (
     <Screen title="Safety triggers" onLeftPress={() => navigation.goBack()}>
+      {Platform.OS === 'android' ? (
+        <>
+          <SectionTitle>Permissions</SectionTitle>
+          <PermissionsCard />
+        </>
+      ) : null}
+
       {/* Voice */}
       <SectionTitle>Voice</SectionTitle>
       <Card padded={false}>
@@ -92,6 +101,16 @@ export const SafetyTriggersScreen = ({ navigation }) => {
           onChange={(v) => updateSettings({ useDistressWords: v })}
           divider
         />
+        {settings.voiceEnabled && (voiceDebug?.engine || voiceDebug?.lastHeard) ? (
+          <View style={[styles.debug, styles.divider]}>
+            {voiceDebug.engine && voiceMode === 'speech' ? (
+              <Text style={styles.rowHint}>Using: {voiceDebug.engine}</Text>
+            ) : null}
+            <Text style={styles.rowHint} numberOfLines={2}>
+              Heard: {voiceDebug.lastHeard ? `"${voiceDebug.lastHeard}"` : 'nothing yet. Say something to test'}
+            </Text>
+          </View>
+        ) : null}
       </Card>
 
       <SectionTitle>Code phrases</SectionTitle>
@@ -204,12 +223,40 @@ export const SafetyTriggersScreen = ({ navigation }) => {
           divider
         />
       </Card>
+      {/* Background + calling */}
+      <SectionTitle>When an SOS starts</SectionTitle>
+      <Card padded={false}>
+        <SwitchRow
+          icon="call"
+          label="Call my first contact"
+          hint="Rings them right after the SOS text (not for silent code-phrase SOS)"
+          value={settings.autoCallFirstContact}
+          onChange={(v) => updateSettings({ autoCallFirstContact: v })}
+        />
+        {Platform.OS === 'android' ? (
+          <SwitchRow
+            icon="shield"
+            label="Keep protecting in the background"
+            hint={
+              settings.backgroundProtection && protectionOn
+                ? 'On: works with other apps open and the screen off'
+                : 'Shows a "Protection is on" notification while voice, shake or running is on'
+            }
+            value={settings.backgroundProtection}
+            onChange={(v) => updateSettings({ backgroundProtection: v })}
+            divider
+          />
+        ) : null}
+      </Card>
+
       {motionState.error && (settings.shakeEnabled || settings.runEnabled) ? (
         <Notice tone="warning">{motionState.error}</Notice>
       ) : null}
       <Text style={styles.footnote}>
         Shake and running start the 10-second SOS countdown, so you can cancel a false alarm. Turn off running
-        detection when you go jogging. Hands-free triggers work while SurakshaX is open.
+        detection when you go jogging. In the background the countdown appears as a notification with an
+        "I'm safe" button. Some phones (Xiaomi, Oppo, Vivo, Samsung) stop background apps unless Battery is
+        set to Unrestricted above.
       </Text>
     </Screen>
   );
@@ -224,6 +271,7 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.sm,
     gap: spacing.md,
   },
+  debug: { paddingHorizontal: spacing.md, paddingVertical: spacing.sm, gap: 2 },
   divider: { borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: colors.divider },
   rowText: { flex: 1 },
   rowLabel: { fontSize: fontSize.body, fontWeight: '600', color: colors.textPrimary },
