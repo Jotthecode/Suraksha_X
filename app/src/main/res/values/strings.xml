@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">SurakshaX</string>
+    <string name="title_dashboard">SurakshaX Safety Hub</string>
+    <string name="title_safe_route">Safe Route Recommendation</string>
+    <string name="title_live_tracking">Live Emergency Tracking</string>
+    <string name="title_safety_history">Safety History &amp; Incident Log</string>
+    <string name="title_contacts">Emergency Contacts Manager</string>
+    <string name="title_alerts">Emergency SOS Countdown</string>
+</resources>

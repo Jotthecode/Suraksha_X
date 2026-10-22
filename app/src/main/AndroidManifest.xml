@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Permissions required by Research Paper Modules -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.SEND_SMS" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+
+    <application
+        android:allowBackup="true"
+        android:label="SurakshaX"
+        android:usesCleartextTraffic="true"
+        android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+
+        <!-- Splash Screen -->
+        <activity
+            android:name=".Splash"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- Screen 1: Onboarding / Registration & Login -->
+        <activity android:name=".MainActivity" />
+        <activity android:name=".Register_Activity" />
+
+        <!-- Screen 2: Home Dashboard with Real-Time Risk Indicator -->
+        <activity android:name=".Dashboard" />
+
+        <!-- Screen 3: Emergency Contacts Manager -->
+        <activity
+            android:name=".Contacts"
+            android:parentActivityName=".Dashboard" />
+
+        <!-- Screen 4: Safe Route Planner with Heatmap Overlay -->
+        <activity
+            android:name=".SafeRouteActivity"
+            android:parentActivityName=".Dashboard" />
+
+        <!-- Screen 5: SOS Activation Screen with Countdown -->
+        <activity
+            android:name=".Alerts"
+            android:parentActivityName=".Dashboard" />
+
+        <!-- Screen 6: Live Tracking Share Screen -->
+        <activity
+            android:name=".LiveTrackingActivity"
+            android:parentActivityName=".Dashboard" />
+
+        <!-- Screen 7: Safety History and Incident Log -->
+        <activity
+            android:name=".SafetyHistoryActivity"
+            android:parentActivityName=".Dashboard" />
+
+        <!-- Ancillary Screens -->
+        <activity
+            android:name=".Profile"
+            android:parentActivityName=".Dashboard" />
+
+        <activity
+            android:name=".Permission"
+            android:parentActivityName=".Dashboard" />
+
+        <activity
+            android:name=".Happy_Screen"
+            android:parentActivityName=".Dashboard" />
+
+    </application>
+
+</manifest>

@@ -1,0 +1,4 @@
+# generated datasets / TTS cache (regenerate with generate_voice_dataset.py)
+data/
+gen_log.txt
+__pycache__/

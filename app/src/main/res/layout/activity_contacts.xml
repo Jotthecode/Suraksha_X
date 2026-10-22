@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FAFAFA">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Manage Guardians"
+            android:textSize="26sp"
+            android:textStyle="bold"
+            android:textColor="#4A148C"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Emergency alerts and live GPS will be sent to these numbers automatically."
+            android:textSize="14sp"
+            android:textColor="#666666"
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="24dp"/>
+
+        <!-- Guardian 1 (Primary) -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Primary Guardian (Priority 1)"
+            android:textStyle="bold"
+            android:textColor="#333333"
+            android:textSize="15sp"/>
+
+        <EditText
+            android:id="@+id/etGuardianName1"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:hint="Guardian Name (e.g., Mom / Dad)"
+            android:background="@android:drawable/editbox_background"
+            android:padding="12dp"
+            android:layout_marginTop="6dp"
+            android:inputType="textPersonName"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="10dp"
+            android:gravity="center_vertical">
+
+            <EditText
+                android:id="@+id/etGuardianPhone1"
+                android:layout_width="0dp"
+                android:layout_height="52dp"
+                android:layout_weight="1"
+                android:hint="Mobile Number (e.g., 9302414220)"
+                android:background="@android:drawable/editbox_background"
+                android:padding="12dp"
+                android:inputType="phone" />
+
+            <ImageButton
+                android:id="@+id/btnQuickCall"
+                android:layout_width="52dp"
+                android:layout_height="52dp"
+                android:layout_marginStart="10dp"
+                android:src="@android:drawable/ic_menu_call"
+                android:backgroundTint="#2E7D32"
+                android:tint="#FFFFFF"
+                android:contentDescription="Quick Call" />
+        </LinearLayout>
+
+        <!-- Guardian 2 (Secondary) -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Secondary Guardian (Optional)"
+            android:textStyle="bold"
+            android:textColor="#333333"
+            android:textSize="15sp"
+            android:layout_marginTop="24dp"/>
+
+        <EditText
+            android:id="@+id/etGuardianPhone2"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:hint="Secondary Mobile Number"
+            android:background="@android:drawable/editbox_background"
+            android:padding="12dp"
+            android:layout_marginTop="6dp"
+            android:inputType="phone" />
+
+        <Button
+            android:id="@+id/btnSaveContacts"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginTop="36dp"
+            android:text="SAVE GUARDIAN CONTACTS"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:backgroundTint="#4A148C"/>
+
+    </LinearLayout>
+</ScrollView>

@@ -1,0 +1,28 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent" android:layout_height="?attr/actionBarSize"
+        android:background="#004D40" app:title="Profile Setup" app:titleTextColor="#FFFFFF" />
+
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:padding="20dp" android:orientation="vertical" android:gravity="center">
+
+        <RelativeLayout android:layout_width="120dp" android:layout_height="120dp">
+            <ImageView android:id="@+id/ivUserProfile" android:layout_width="match_parent" android:layout_height="match_parent" android:src="@android:drawable/ic_menu_gallery" android:background="#F0F0F0" />
+            <ImageButton android:id="@+id/btnChangePic" android:layout_width="40dp" android:layout_height="40dp" android:layout_alignParentBottom="true" android:layout_alignParentEnd="true" android:src="@android:drawable/ic_menu_camera" android:backgroundTint="#004D40" />
+        </RelativeLayout>
+
+        <EditText android:id="@+id/etProfileName" android:layout_width="match_parent" android:layout_height="55dp" android:hint="Full Name" android:layout_marginTop="20dp" android:background="@android:drawable/editbox_background" android:padding="10dp" android:inputType="textPersonName"/>
+
+        <Button android:id="@+id/btnEditContacts" android:layout_width="match_parent" android:layout_height="55dp" android:text="Edit Emergency Contacts" android:layout_marginTop="20dp" android:backgroundTint="#F5F5F5" android:textColor="#000000"/>
+
+        <Button android:id="@+id/btnSettings" android:layout_width="match_parent" android:layout_height="55dp" android:text="App Settings (Permissions)" android:layout_marginTop="10dp" android:backgroundTint="#F5F5F5" android:textColor="#000000"/>
+
+        <Button android:id="@+id/btnSave" android:layout_width="match_parent" android:layout_height="60dp" android:text="SAVE CHANGES" android:backgroundTint="#004D40" android:textColor="#FFFFFF" android:textStyle="bold" android:layout_marginTop="30dp"/>
+
+    </LinearLayout>
+</LinearLayout>

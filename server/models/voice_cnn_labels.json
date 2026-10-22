@@ -1,0 +1,105 @@
+{
+  "classes": [
+    "help",
+    "save_me",
+    "emergency",
+    "bachao",
+    "madad_karo",
+    "madat_kara",
+    "vachva",
+    "kapaathu",
+    "sahajjo_koro",
+    "background"
+  ],
+  "background_class": "background",
+  "display": {
+    "help": {
+      "keyword": "HELP",
+      "language": "English"
+    },
+    "save_me": {
+      "keyword": "SAVE ME",
+      "language": "English"
+    },
+    "emergency": {
+      "keyword": "EMERGENCY",
+      "language": "English"
+    },
+    "bachao": {
+      "keyword": "BACHAO",
+      "language": "Hindi"
+    },
+    "madad_karo": {
+      "keyword": "MADAD KARO",
+      "language": "Hindi"
+    },
+    "madat_kara": {
+      "keyword": "MADAT KARA",
+      "language": "Marathi"
+    },
+    "vachva": {
+      "keyword": "VACHVA",
+      "language": "Marathi"
+    },
+    "kapaathu": {
+      "keyword": "KAPAATHU",
+      "language": "Tamil"
+    },
+    "sahajjo_koro": {
+      "keyword": "SAHAJJO KORO",
+      "language": "Bengali"
+    },
+    "background": {
+      "keyword": "NONE (Safe / Ambient)",
+      "language": "None"
+    }
+  },
+  "threshold": 0.85,
+  "feature_params": {
+    "sample_rate": 16000,
+    "window_seconds": 1.0,
+    "window_samples": 16000,
+    "n_fft": 400,
+    "win_length": 400,
+    "hop_length": 160,
+    "window": "hamming (symmetric, numpy.hamming)",
+    "n_mels": 64,
+    "n_mfcc": 40,
+    "fmin": 20.0,
+    "fmax": 8000.0,
+    "mel_scale": "htk",
+    "pre_emphasis": 0.97,
+    "dither": 1e-05,
+    "center": "zero-pad n_fft//2 both sides",
+    "dct": "type-II orthonormal",
+    "normalization": "per-utterance: subtract per-coefficient mean, divide by utterance-level std",
+    "n_frames": 101,
+    "implementation": "backend/ml/features.py (numpy only)"
+  },
+  "inference": {
+    "window_seconds": 1.0,
+    "hop_seconds": 0.25,
+    "aggregation": "max over windows of max non-background softmax prob"
+  },
+  "input": {
+    "name": "mfcc",
+    "shape": [
+      "N",
+      1,
+      40,
+      101
+    ]
+  },
+  "output": {
+    "name": "logits",
+    "apply": "softmax"
+  },
+  "model_architecture": "4-Layer CNN (2x Conv2D + BatchNorm + ReLU + MaxPool, 2x FC, Softmax)",
+  "trained_at": "2026-10-11T19:44:37.603180+00:00",
+  "training_data": "synthetic multilingual TTS (edge-tts neural voices) + augmentation",
+  "heldout_voices": [
+    "hi-IN-SwaraNeural",
+    "en-GB-RyanNeural",
+    "ta-IN-ValluvarNeural"
+  ]
+}

@@ -1,0 +1,49 @@
+*.iml
+.gradle
+/local.properties
+/.idea/caches
+/.idea/libraries
+/.idea/modules.xml
+/.idea/workspace.xml
+/.idea/navEditor.xml
+/.idea/assetWizardSettings.xml
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.idea/
+*.apk
+__pycache__/
+*.pyc
+local.properties
+SurakshaX_Master_Guide.md
+
+# --- Build output and dependencies
+build/
+node_modules/
+.expo/
+dist/
+web-build/
+# Generated from app.json by `npx expo prebuild` (Continuous Native Generation)
+mobile/android/
+mobile/ios/
+.venv/
+venv/
+.pytest_cache/
+
+# --- Secrets and personal data (never commit)
+.env
+.env.*
+!.env.example
+*.db
+*.keystore
+*.jks
+app/google-services.json
+backend/users_db.json
+
+# --- Large ML training data (regenerate with backend/ml/generate_voice_dataset.py)
+backend/ml/data/
+
+# --- Local tooling
+.claude/
+*.log
